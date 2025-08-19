@@ -2,3 +2,49 @@ baseURL: https://yip.cymru/
 languageCode: en-gb
 title: yip.cymru
 theme: ["PaperMod"]
+
+params:
+  showBreadCrumbs: true
+  showNavLinks: true
+  showReadingTime: true
+  showPostMeta: true
+  showPostNavLinks: true
+  showPostToc: true
+  showPostShareButtons: true
+  showPostTags: true
+  showPostAuthor: true
+  showPostDate: true
+  profileMode:
+    enabled: true
+    title: "<Title>" # optional default will be site title
+    subtitle: "(art by [**Clanky!**](https://bsky.app/profile/clankyboy.bsky.social))"
+    imageUrl: "FlickHappy.png" # optional
+    imageTitle: "<title of image as alt>" # optional
+    imageWidth: 480 # custom size
+    imageHeight: 480 # custom size
+    buttons:
+      - name: About
+        url: "/about"
+      - name: Github
+        url: "https://github.com/FlickDaKobold"
+
+  socialIcons: # optional
+    - name: "bluesky"
+      url: "<https://bsky.app/profile/yip.cymru>"
+    - name: "telegram"
+      url: "t.me/FlickDaKobold"
+
+menu:
+  main:
+    - identifier: home
+      name: home
+      url: /
+      weight: 10
+    - identifier: posts
+      name: posts
+      url: /posts/
+      weight: 20
+    - identifier: 18+
+      name: 18+
+      url: /18/
+      weight: 30
