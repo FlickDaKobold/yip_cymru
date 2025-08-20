@@ -18,7 +18,7 @@ params:
     enabled: true
     title: "<Title>" # optional default will be site title
     subtitle: "(art by [**Clanky!**](https://bsky.app/profile/clankyboy.bsky.social))"
-    imageUrl: "FlickHappy.png" # optional
+    imageUrl: "https://github.com/FlickDaKobold/yip_cymru/blob/main/static/images/FlickHappy.png" # optional
     imageTitle: "<title of image as alt>" # optional
     imageWidth: 480 # custom size
     imageHeight: 480 # custom size
