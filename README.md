@@ -8,4 +8,6 @@ Absolute WIP, please don't judge my jank :)
 - [x] Choose theme
 - [x] Generate Hugo project
 - [x] Make homepage
-- [x] Make Docker compose
+- [ ] Add some posts!
+- [ ] Find suitable web server
+- [ ] Sort SSL
