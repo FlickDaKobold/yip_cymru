@@ -27,6 +27,8 @@ params:
         url: "/about"
       - name: Github
         url: "https://github.com/FlickDaKobold"
+      - name: Barq
+        url: "https://barq.app/@flick"
 
   socialIcons: # optional
     - name: "bluesky"
