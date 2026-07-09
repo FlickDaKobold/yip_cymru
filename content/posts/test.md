@@ -1,10 +1,10 @@
 +++
-title = 'My First Post'
-date = 2024-01-14T07:07:07+01:00
+title = 'Test'
+date = 2026-07-09T17:51:47+01:00
 draft = true
 +++
 
-# Test
+# WIP: 
 This is a test post!
 
 **This is bold text**
@@ -15,4 +15,3 @@ This is a test post!
 
 ### Subsubheading
 
-$-b \pm \sqrt{b^2 - 4ac} \over 2a$

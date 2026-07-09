@@ -1,7 +1,12 @@
 baseURL: https://yip.cymru/
 languageCode: en-gb
-title: yip.cymru
+title: Flick!
 theme: ["PaperMod"]
+
+
+module:
+  imports:
+  - path: github.com/KKKZOZ/hugo-admonitions
 
 params:
   showBreadCrumbs: true
@@ -46,7 +51,7 @@ menu:
       name: posts
       url: /posts/
       weight: 20
-    - identifier: 18+
-      name: 18+
-      url: /18/
-      weight: 30
+    #- identifier: 18+
+    #  name: 18+
+    #  url: /18/
+    #  weight: 30
