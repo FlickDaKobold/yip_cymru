@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Getting USB Boot to work on a Powerbook G4 - or why OpenFirmware is the literal spawn of satan himself | Flick!</title>
+<meta name="keywords" content="">
+<meta name="description" content="
+    
+      
+        TL;DR
+      
+      
+        For the A1106 specifically - using the right USB port, use the command probe-usb boot usb0/disk@1:,\\:tbxi in OpenFirmware to boot. Read further if you want to see me slowly lose my sanity trying to work this out.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/g4-open-firmware/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/g4-open-firmware/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Flick! (Alt + H)">Flick!</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="home">
+                    <span>home</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/posts/" title="posts">
+                    <span>posts</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Getting USB Boot to work on a Powerbook G4 - or why OpenFirmware is the literal spawn of satan himself
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h1>
+    <div class="post-meta"><span title='2026-07-13 17:15:54 +0100 BST'>July 13, 2026</span>&nbsp;·&nbsp;7 min
+
+</div>
+  </header> 
+  <div class="post-content">
+          <link rel="stylesheet" href="/css/vendors/admonitions.css">
+    <div class="admonition tip">
+      <div class="admonition-header"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M272 384c9.6-31.9 29.5-59.1 49.2-86.2c0 0 0 0 0 0c5.2-7.1 10.4-14.2 15.4-21.4c19.8-28.5 31.4-63 31.4-100.3C368 78.8 289.2 0 192 0S16 78.8 16 176c0 37.3 11.6 71.9 31.4 100.3c5 7.2 10.2 14.3 15.4 21.4c0 0 0 0 0 0c19.8 27.1 39.7 54.4 49.2 86.2l160 0zM192 512c44.2 0 80-35.8 80-80l0-16-160 0 0 16c0 44.2 35.8 80 80 80zM112 176c0 8.8-7.2 16-16 16s-16-7.2-16-16c0-61.9 50.1-112 112-112c8.8 0 16 7.2 16 16s-7.2 16-16 16c-44.2 0-80 35.8-80 80z"/></svg>
+        <span>TL;DR</span>
+      </div>
+      <div class="admonition-content">
+        <p>For the A1106 specifically - using the right USB port, use the command <code>probe-usb boot usb0/disk@1:,\\:tbxi</code> in OpenFirmware to boot. Read further if you want to see me slowly lose my sanity trying to work this out.</p>
+      </div>
+    </div><h1 id="preamble">Preamble<a hidden class="anchor" aria-hidden="true" href="#preamble">#</a></h1>
+<p>A few months ago, I acquired a PowerBook G4 on eBay for a ridiculously good price.
+<img loading="lazy" src="/images/posts/g4-open-firmware/ebay_order.png"></p>
+<p>I&rsquo;ve adored the PowerBook G4 for <em>years</em>, and I managed to score an A1106 - it has the top-spec 1.67GHz G4 processor, but without the high-res display on the final model.</p>
+<p>It shipped with Mac OSX 10.5 Leopard installed and fully updated - and thanks to the seller <em>not wiping the disk</em>, it still had a worrying amount of personal files on the disk.</p>
+<blockquote>
+<p>As a small aside - if you&rsquo;re selling any device with the original storage medium, assume anybody who gets their hands on it <em>will</em> go through the drive. Always securely erase your drives!!</p></blockquote>
+<p>Now, I wanted to start afresh with a new installation of OSX 10.5 Leopard on a brand new SSD - unfortunately, the DVD drive was completely and utterly bollocksed, and I don&rsquo;t have the tools nor time to get it fixed. Even in 2005, you could usually get a computer booting off of a USB, so it should be a piece of cake to get the image on a USB drive, and get everything installed in the space of an hour, right? I just need to pop in the BIOS and manually boot off of it.</p>
+<p><strong><em>&hellip;right??</em></strong></p>
+<hr>
+<h1 id="openfirmware">OpenFirmware<a hidden class="anchor" aria-hidden="true" href="#openfirmware">#</a></h1>
+<p>Enter stage: OpenFirmware.</p>
+
+    <div class="admonition note">
+      <div class="admonition-header"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 125.7-86.8 86.8c-10.3 10.3-17.5 23.1-21 37.2l-18.7 74.9c-2.3 9.2-1.8 18.8 1.3 27.5L64 512c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128zM549.8 235.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-29.4 29.4-71-71 29.4-29.4c15.6-15.6 40.9-15.6 56.6 0zM311.9 417L441.1 287.8l71 71L382.9 487.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>
+        <span>Disclaimer</span>
+      </div>
+      <div class="admonition-content">
+        <p>I&rsquo;m not at <em>all</em> an expert on PPC-era Macs, so this will be a rather abridged summary. I&rsquo;ve tried to be as accurate as possible, but please do shout at me if I&rsquo;ve gotten anything wrong!</p>
+      </div>
+    </div><p>With the PowerMacs 7200, 7500, and 9500, Apple introduced the PCI bus - and alongside, a new firmware adopted from Sun Microsystems called OpenFirmware. Apple couldn&rsquo;t just use a BIOS; that was (until worryingly recently) designed specifically around the architecture of the <em>original</em> IBM PC, and it&rsquo;d be a fool&rsquo;s errand to get that ported to PowerPC.</p>
+<p>This lasted all the way up until the introduction of the Intel-based Macs - meaning the Powerbook G4 I&rsquo;ve got here uses it!</p>
+<p>OpenFirmware is an odd beast. It&rsquo;s developed in (and requires you to use) Forth(<strong>!!</strong>), and is completely command-line based <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>. No buttons, or wizards, or even useful documentation built-in - it&rsquo;s about as obtuse as it gets.</p>
+<p><strong>IMAGE OF OPENFIRMWARE HERE</strong></p>
+<p>I could go on for hours about the strange intricacies of OF. To keep this <em>relatively</em> concise, I&rsquo;ll focus on just the implementation on my Powerbook G4.</p>
+<h2 id="the-very-little-i-worked-out-on-my-own">The VERY little I worked out on my own.<a hidden class="anchor" aria-hidden="true" href="#the-very-little-i-worked-out-on-my-own">#</a></h2>
+<p>So, what the hell can I actually do with this? The bits I worked out were:</p>
+<ul>
+<li>Eject the CD-ROM using <code>eject cd</code></li>
+<li>Shutdown the machine using <code>shut-down</code></li>
+</ul>
+<p>&hellip;and that&rsquo;s all I could work out without research.</p>
+<p>So, to Google I went!</p>
+<hr>
+<h1 id="usb-booting-the-first-and-second-fruitless-attempts">USB Booting: The first and second fruitless attempts.<a hidden class="anchor" aria-hidden="true" href="#usb-booting-the-first-and-second-fruitless-attempts">#</a></h1>
+<h2 id="1-stackoverflow">1: StackOverflow<a hidden class="anchor" aria-hidden="true" href="#1-stackoverflow">#</a></h2>
+<p>First of all - there seems to be no good single source for information on OpenFirmware for Macs. All the archived Apple pages are either pointlessly sparse or stupidly technical. I had to rely on forum posts as any kind of vaguely authoritative information on this.</p>
+<p>The first post I found on Google was <a href="https://apple.stackexchange.com/questions/11128/how-do-i-make-my-1-5-ghz-powerbook-g4-boot-from-a-usb-stick">This</a> StackOverflow post from 2011. This was for a 1.5GHz PowerBook G4 - really similar to mine! (this will be important later) The best answer has an easy command to enter (<code>boot usb1/disk@1:,\\yaboot</code>). <code>yaboot</code> is specifically for Linux images, so I replaced it with <code>,\\tbxi</code> for Mac OS X.</p>
+<p>The result?: <strong>FIND EXACT OUTPUT FROM OF FOR THIS</strong> Trying every single USB port, it did the same.</p>
+<p>Ah, but, the second answer says you need to specify the exact partition of the drive you&rsquo;ve got plugged in - that makes sense! I&rsquo;ll amend the partition number, and try <code>boot usb1/disk@1:00,\\tbxi</code>!</p>
+<p>&hellip;nope. Nothing.</p>
+<p>I gave up on this post, and looked elsewhere.</p>
+<h2 id="2-macrumours-forum">2: MacRumours Forum<a hidden class="anchor" aria-hidden="true" href="#2-macrumours-forum">#</a></h2>
+<p>Perfect! The MacRumours forum is a bloody excellent resource, so finding <a href="https://forums.macrumors.com/threads/guide-new-method-booting-from-usb-on-powerpc-macs.2403368/">this</a> post was a godsend, right?</p>
+<p>Ha. Hahaha. Hahahahaha. Ha.</p>
+<p>I had to find two things - the partition ID on the drive and the USB port ID it was plugged into. The first was easy! The second?</p>
+<h3 id="usb-ids-in-openfirmware">USB IDs in OpenFirmware<a hidden class="anchor" aria-hidden="true" href="#usb-ids-in-openfirmware">#</a></h3>
+<p>For whatever reason, even though it can boot from them, this post suggests OpenFirmware <strong>cannot detect any USB storage devices plugged in.</strong> To get past this, the post suggests to do three things:</p>
+<ul>
+<li>Unplug every USB device from your laptop,</li>
+<li>Plug in a USB keyboard,</li>
+<li>Do <code>dev usb0</code> to select the USB port, then <code>ls</code> to list all devices connected, increasing the USB port number until you&rsquo;ve checked all of them.</li>
+<li>The USB that has a <code>keyboard@X</code> value but NOT a <code>mouse@x</code> value is your port!</li>
+</ul>
+<p>So, I plugged my shittiest, most basic keyboard into the Powerbook, used it to type in the commands, and&hellip;</p>
+<p><strong>Nothing.</strong> It wouldn&rsquo;t detect the keyboard. The keyboard I was currently typing on.</p>
+<p>This was frustrating as hell, but ultimately fine - I&rsquo;d just try them all.</p>
+<h3 id="probe-usb">probe-usb<a hidden class="anchor" aria-hidden="true" href="#probe-usb">#</a></h3>
+<p>This guide had a new command prefixed on the front - <code>probe-usb</code>. I have absolutely no clue what this does, but at least it&rsquo;s something different!</p>
+<p>The command I have now is <code>probe-usb boot usb0/disk:3,\\:tbxi</code>.</p>
+<p>Trying this makes OpenFirmware completely freeze, and there&rsquo;s nothing I can do to recover it. Ballsack.</p>
+<p>It&rsquo;s fine, I just have to try every USB port number until it works - it&rsquo;ll take a goddamn age, but it&rsquo;ll work eventually, right?</p>
+<p>Nope, nothing. Absolutely nada.</p>
+<h1 id="grasping-at-straws-until-something-works">Grasping at Straws Until Something Works<a hidden class="anchor" aria-hidden="true" href="#grasping-at-straws-until-something-works">#</a></h1>
+<p>At this point, I&rsquo;m getting really annoyed and desparate. The first page I found was <a href="https://lifedigital2010.wordpress.com/2011/04/03/how-to-install-mac-osx-from-usb-on-powerbook-g4/">this</a> ancient WordPress page on USB booting on a Powerbook G4. To start with, this guide requires you to&hellip;list USB storage devices?</p>
+<p>The previous post seemed to suggest this <strong>wasn&rsquo;t possible</strong>, or at least not reliable - huh??</p>
+<p>Using <code>dev / ls</code>, I listed every device on the laptop - aaand nothing. No disks whatsoever. It <em>did</em> have an interesting tidbit - you can specify the exact path you want to boot from. It also changes the <code>disk:3</code> part to be <code>disk@1:3</code>?</p>
+<p>Using this new-found knowledge, I constructed a new command - <code>boot usb0/disk@1:3,\System\Library\CoreServices\BootX</code>.</p>
+<p>&hellip;nothing.</p>
+<p>What about appending probe-usb?</p>
+<p>That just crashes it. Great.</p>
+<p>I won&rsquo;t go over the half-dozen pages I went through after that in much detail, but safe to say, absolutely nothing worked. It felt like my specific PowerBook G4 was cursed, and didn&rsquo;t want to do anything that any of the guides thought it should. I decided to leave it for the week.</p>
+<hr>
+<h1 id="frankensteining-this-shit-into-doing-my-bidding">Frankensteining This Shit into Doing My Bidding<a hidden class="anchor" aria-hidden="true" href="#frankensteining-this-shit-into-doing-my-bidding">#</a></h1>
+<p>I came back after a week, and decided to take stock of everything I&rsquo;d done so far.</p>
+<p>This was:</p>
+<ul>
+<li>I can&rsquo;t detect the USB port.</li>
+<li>There seem to be at least two different ways to get OpenFirmware to target your disk: using an @, and not using an @?</li>
+<li><del>OpenFirmware was created by the devil specifically to punish those who can&rsquo;t be arsed to fix a DVD drive</del></li>
+</ul>
+<p>I&rsquo;d failed to find any other relevant resources, so fuck it, let&rsquo;s just try some shit.</p>
+<p>First, I tried <code>boot usb0/disk:3,\System\Library\CoreServices\BootX</code> - removing the @. Nothing.</p>
+<p>I tried that with probe-usb - another freeze.</p>
+<p>Next, fuck it, I&rsquo;ll do <code>probe-usb boot usb0/disk@1:3\\:tbxi</code> - yep, froze again.</p>
+<p>I went through a <em>lot</em> of variations with no success, so had a look at the articles I&rsquo;d seen before. I looked at the StackOverflow page, and realised it <em>wasn&rsquo;t</em> specifying a partition ID.</p>
+<p>I tried this again. Nothing.</p>
+<p>I tried it with probe-usb. It immediately booted into the goddamn MacOS 10.5 installer.</p>
+<h1 id="so-what-have-we-learned">So, what have we learned?<a hidden class="anchor" aria-hidden="true" href="#so-what-have-we-learned">#</a></h1>
+<p>First of all - OpenFirmware is a godforsaken piece of shit, and is exactly what I&rsquo;d expect to come out of Sun Microsystems.</p>
+<p>After this whole fucking polava, I did a bit of digging. Different generations of PowerBook have different OpenFirmware versions. I can&rsquo;t confirm this, but it seems the differences between different revisions, even minor ones, is surprisingly big. Commands that run fine on one Mac will fail on another, or do something completely different. I&rsquo;ve got a feeling all of the guides I saw would work absolutely perfectly on other devices.</p>
+<p>Remember the StackOverflow page? That was for a 2004 1.5GHz PowerBook G4 - so similar to mine that I assumed it would be identical! Turns out, that runs OpenFirmware 4.8.6 - mine looks to run 4.9.1. I&rsquo;ve got a feeling that command would work perfectly if I had that specific laptop.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.martinnobel.com/techresearch/the-open-firmware-wiki">https://www.martinnobel.com/techresearch/the-open-firmware-wiki</a>: The Open Firmware Wiki, Mark Nobel&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://localhost:1313/posts/test/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Test</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">Flick!</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

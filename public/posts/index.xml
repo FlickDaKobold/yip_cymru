@@ -6,8 +6,21 @@
     <description>Recent content in Posts on Flick!</description>
     <generator>Hugo -- 0.148.2</generator>
     <language>en-gb</language>
-    <lastBuildDate>Thu, 09 Jul 2026 17:51:47 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 13 Jul 2026 17:15:54 +0100</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting USB Boot to work on a Powerbook G4 - or why OpenFirmware is the literal spawn of satan himself</title>
+      <link>http://localhost:1313/posts/g4-open-firmware/</link>
+      <pubDate>Mon, 13 Jul 2026 17:15:54 +0100</pubDate>
+      <guid>http://localhost:1313/posts/g4-open-firmware/</guid>
+      <description>&lt;link rel=&#34;stylesheet&#34; href=&#34;http://localhost:1313/css/vendors/admonitions.css&#34;&gt;
+    &lt;div class=&#34;admonition tip&#34;&gt;
+      &lt;div class=&#34;admonition-header&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 384 512&#34;&gt;&lt;path d=&#34;M272 384c9.6-31.9 29.5-59.1 49.2-86.2c0 0 0 0 0 0c5.2-7.1 10.4-14.2 15.4-21.4c19.8-28.5 31.4-63 31.4-100.3C368 78.8 289.2 0 192 0S16 78.8 16 176c0 37.3 11.6 71.9 31.4 100.3c5 7.2 10.2 14.3 15.4 21.4c0 0 0 0 0 0c19.8 27.1 39.7 54.4 49.2 86.2l160 0zM192 512c44.2 0 80-35.8 80-80l0-16-160 0 0 16c0 44.2 35.8 80 80 80zM112 176c0 8.8-7.2 16-16 16s-16-7.2-16-16c0-61.9 50.1-112 112-112c8.8 0 16 7.2 16 16s-7.2 16-16 16c-44.2 0-80 35.8-80 80z&#34;/&gt;&lt;/svg&gt;
+        &lt;span&gt;TL;DR&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&#34;admonition-content&#34;&gt;
+        &lt;p&gt;For the A1106 specifically - using the right USB port, use the command &lt;code&gt;probe-usb boot usb0/disk@1:,\\:tbxi&lt;/code&gt; in OpenFirmware to boot. Read further if you want to see me slowly lose my sanity trying to work this out.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Test</title>
       <link>http://localhost:1313/posts/test/</link>
